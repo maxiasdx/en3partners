@@ -1,0 +1,299 @@
+<?php
+
+function en3_lms_block_info() {
+  $blocks = array();
+  $blocks['user_courses_passed'] = array(
+    'info' => t('Courses Passed'),
+  );
+
+  $blocks['user_courses_failed'] = array(
+    'info' => t('Courses Failed'),
+  );
+
+  $blocks['user_courses_yet_to_attempt'] = array(
+    'info' => t('Courses Yet to Attempt'),
+  );
+  
+  $blocks['licensce_image'] = array(
+    'info' => t('License Image'),
+  );
+
+  return $blocks;
+}
+/**
+* Implements hook_block_view().
+*/
+function en3_lms_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'user_courses_passed':
+      $block['subject'] = '';
+      if(user_is_logged_in()){
+        $block['content'] = en3_lms_passed_result();
+      }
+      break;
+
+    case 'user_courses_failed':
+      $block['subject'] = '';
+      if(user_is_logged_in()){
+        $block['content'] = en3_lms_failed_result();
+      }
+      break;
+
+    case 'user_courses_yet_to_attempt':
+      $block['subject'] = '';
+      if(user_is_logged_in()){
+        $block['content'] = en3_lms_courses_yet_to_attempt();
+      }
+      break;
+    
+    case 'licensce_image':
+      $block['subject'] = '';
+      $block['content'] = en3_lms_license_img_block();
+      break;
+
+
+  }
+  return $block;
+}
+
+
+function en3_lms_failed_result(){
+  global $user;
+  $header_s = array(
+                 array('data' => 'Course Name','field' => 'nid','sort' => 'ASC',),
+                 'Failed',
+                 array('data' => 'Date','field' => 'time_start','sort' => 'ASC',),
+                 array('data' => 'Score','field' => 'score','sort' => 'ASC',),
+                 'Revise Course',
+                 'Attempt Again');
+  global $base_url;
+    $query = db_select('quiz_node_results', 'qnr')
+              ->extend('PagerDefault')
+              ->extend('TableSort');
+
+  # get the desired fields from the database
+  $query->condition('uid', $user->uid)
+        ->condition('score',75,'<')
+        ->fields('qnr', array('nid', 'score', 'time_start'))
+        ->groupBy('nid')
+        ->orderByHeader($header_s)
+        ->limit(5);
+
+  # execute the query
+  $results = $query->execute();
+
+  foreach($results as $quiz){
+    $course_title = db_select('course_outline', 'co');
+    $course_title->join('node', 'n', 'co.nid= n.nid');
+    $course_title->fields('n', array('title','nid'))
+      ->condition('co.instance', $quiz->nid);
+    $course_title = $course_title->execute()->fetchAll();
+
+    $documents_id = db_query("select instance from course_outline where nid = :nid and object_type = :type",array(':nid' => $course_title[0]->nid,':type' => 'course_documents'))->fetchAll();
+  
+
+   foreach($documents_id as $document){
+     $doc_node_title = db_query("select title from node where nid = :nid",array(':nid' => $document->instance))->fetchField();
+     $documents .= "<a href =".$base_url."/node/".$document->instance.">".$doc_node_title."</a><br/>";
+   }
+
+    $options[] =  array(
+                    $course_title[0]->title,
+                    'yes',
+                     date('j F Y',$quiz->time_start),
+                    $quiz->score."/75",
+                    $documents,
+                    "<a href =".$base_url."/node/".$quiz->nid."/take>Re-Take</a>");
+    
+  }
+  $output =  theme('table', array(
+    'header' => $header_s,
+    'rows' => $options,
+    ));
+  
+  $output .= theme('pager');
+  return $output;
+}
+
+function en3_lms_passed_result(){
+  global $user;
+  global $base_url;
+    $query = db_select('quiz_node_results', 'qnr')
+             ->extend('PagerDefault')
+             ->extend('TableSort');
+
+  $header_w = array(
+                 array('data' => 'Course Name','field' => 'nid','sort' => 'ASC',),
+                 'Passed',
+                 array('data' => 'Date'
+,'field' => 'time_start','sort' => 'ASC',),
+                 array('data' => 'Score','field' => 'score','sort' => 'ASC'),
+            );
+
+  # get the desired fields from the database
+  $query->condition('uid', $user->uid)
+        ->condition('score',75,'>')
+        ->fields('qnr', array('nid', 'score', 'time_start'))
+        ->groupBy('nid')
+        ->orderbyHeader($header_w)
+        ->limit(5);
+
+  # execute the query
+  $results = $query->execute();
+
+  $quiz_nid  = db_query("select nid,score,time_start from quiz_node_results where uid = :uid and score < :score GROUP BY nid limit 2",array(':uid' => $user->uid,':score' => 75))->fetchAll();
+
+
+  foreach($results as $quiz){
+    $course_title = db_select('course_outline', 'co');
+    $course_title->join('node', 'n', 'co.nid= n.nid');
+    $course_title->fields('n', array('title','nid'))
+      ->condition('co.instance', $quiz->nid);
+    $course_title = $course_title->execute()->fetchAll();
+
+    //$documents_id = db_query("select instance from course_outline where nid = :nid and object_type = :type",array(':nid' => $course_title[0]->nid,':type' => 'course_documents'))->fetchAll();
+  
+
+  
+    $options[] =  array(
+                    $course_title[0]->title,
+                    'yes',
+                     date('j F Y',$quiz->time_start),
+                    $quiz->score."/75",
+                   );
+    
+  }
+
+$build['tablesort_table'] = array(
+    '#theme' => 'table',
+    '#header' => $header_w,
+    '#rows' => $options,
+  );
+
+  return $build;
+  
+
+}
+
+function en3_lms_courses_yet_to_attempt(){
+  global $user;
+  global $base_url;
+
+  $header = array(
+                 array('data' => 'Course Name','field' => 'nid','sort' => 'ASC',),
+                 'Yet to Attempt');
+
+  $course_nodes = db_query("select nid from node where type = 'course'")->fetchAll();
+
+  $course_title = db_select('course_outline', 'co');
+    $course_title->join('quiz_node_results', 'qnr', 'co.instance= qnr.nid');
+    $course_title->fields('co', array('nid'))
+      ->condition('qnr.uid', $user->uid)
+       ->extend('PagerDefault')
+       ->extend('TableSort')
+       ->orderbyHeader($header);
+    $course_title = $course_title->execute()->fetchAll();
+    foreach($course_title as $nid){
+
+      $nids[] = $nid->nid;
+    }
+
+    foreach($course_nodes as $course_nid){
+
+      if(!in_array($course_nid->nid,$nids)){
+         $yet_course  = db_query("select title from node where nid = :nid",array(':nid' => $course_nid->nid))->fetchField();
+         $options[] = array("<a href = ".$base_url."/node/".$course_nid->nid.">".$yet_course."</a>",'Yes');
+      }
+    }
+  $output =  theme('table', array(
+    'header' => $header,
+    'rows' => $options,
+    ));
+return $output;
+}
+
+
+function en3_lms_license_img_block(){
+  global $user;
+  $users = user_load($user->uid);
+  if(!empty($users->og_user_node[LANGUAGE_NONE]) && ($user->uid != 34)){
+  $membership_node_id = $users->og_user_node[LANGUAGE_NONE][0]['target_id'];
+  $node = node_load($membership_node_id);
+  if(user_is_logged_in() && !empty($node->field_oa_banner[LANGUAGE_NONE][0]['fid'])){
+
+    $fid = $node->field_oa_banner[LANGUAGE_NONE][0]['fid'];
+    variable_set('oa_site_banner', $fid);
+
+ 
+  }
+
+}
+  else
+  {
+
+    $fid = 77;
+    variable_set('oa_site_banner', $fid);
+  }
+ 
+}
+
+
+function en3_lms_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  if($form_id == 'comment_node_customer_form'){
+   if(!in_array('administrator',$user->roles)){
+      if(!in_array('Site admin',$user->roles)){
+
+      $comment_ids = db_query("select cid from comment where nid = :nid",array(':nid' => $form_state['build_info']['args'][0]->nid))->fetchAll();
+      foreach($comment_ids as $cid){
+        $comment = comment_load($cid->cid);
+
+        if(!empty($comment->field_signed_date)){
+           $date_is_there = TRUE;
+        }
+      }
+      if($date_is_there){
+        $form['field_signed_date']['#disabled'] = TRUE;
+
+     }
+    }
+   }
+}
+return $form;
+}
+
+/*
+ * Implemets hoo_views_pre_render().
+ *
+ */
+
+function en3_lms_views_pre_render(&$view){
+  global $user;
+  
+  if($view->name == 'og_members'){
+   
+    if(in_array('Account Manager',$user->roles)){  
+    foreach ($view -> result as $key => &$result) {
+  
+  
+        unset($view->result[$key]);
+  
+}
+}
+}
+
+}
+
+/**
+ * Implements hook_node_view($node,$view_mode,$language).
+ */
+function en3_lms_node_view($node,$view_mode,$langcode){
+  if($node->type == 'customer'){
+      $breadcrumb = array();
+    $breadcrumb[] = l('Home', '<front>');
+    $breadcrumb[] = l('CRM', 'spaces');
+
+    drupal_set_breadcrumb($breadcrumb);
+  }
+}

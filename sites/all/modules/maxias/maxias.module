@@ -1,0 +1,38 @@
+<?php
+/* Hook form alter
+ * Sets "notify user of new account" chosen by default
+*/
+function maxias_form_alter(&$form, $form_state, $form_id){
+  if ($form_id == 'user_register_form') {
+    $form['account']['notify']['#default_value'] = TRUE;
+  }
+}
+// Hook for block
+function maxias_block_info() {
+  $blocks = array();
+  $blocks['add_customer'] = array(
+    'info' => t('Add New Customer'),
+  );   
+ return $blocks;
+ 
+}
+
+// Block parameter (needed by drupal's hook)
+function maxias_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {    
+	case 'add_customer':
+		$block['subject'] = t('Add New Customer');
+		$block['content'] = add_new_customer();
+		return $block;
+		break;	
+  }
+}
+
+function add_new_customer(){	
+	
+	$output = '<ul><li class="first last"><a href="/node/add/customer?destination=node/'.arg(1).'">Add New Customer</a></li>
+</ul>';
+
+	return $output;
+}

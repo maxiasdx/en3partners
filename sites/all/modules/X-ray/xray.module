@@ -1,0 +1,11 @@
+<?php
+
+function xray_form_alter(&$form, &$form_state, $form_id)
+{
+  if ($form_id == 'comment_node_customer_form') {
+print "<pre>";
+print_r($form);
+print "</pre>";
+  }
+}
+?>

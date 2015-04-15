@@ -1,0 +1,157 @@
+<?php
+
+function en3_lms_menu() {
+  $items['user/failed-results'] = array(
+    'title' => 'Course Failed Results',
+    'description' => 'Display the failed course results',
+    'page callback' => 'en3_lms_failed_result',
+    'access arguments' => array('access failed results'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 20,
+  );
+
+  $items['user/passed-results'] = array(
+    'title' => 'Course Passed Results',
+    'description' => 'Display the passed course results',
+    'page callback' => 'en3_lms_passed_result',
+    'access arguments' => array('access passed results'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 20,
+  );
+
+  $items['user/course-yet-to-attempt'] = array(
+    'title' => 'Courses yet to attempt',
+    'description' => 'Display the list of courses yet to attempt',
+    'page callback' => 'en3_lms_courses_yet_to_attempt',
+    'access arguments' => array('access yet to attempt courses'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 20,
+  );
+  return $items;
+}
+
+function en3_lms_failed_result(){
+  global $user;
+  global $base_url;
+    $query = db_select('quiz_node_results', 'qnr')->extend('PagerDefault');
+
+  # get the desired fields from the database
+  $query->condition('uid', $user->uid)
+        ->condition('score',75,'<')
+        ->fields('qnr', array('nid', 'score', 'time_start'))
+        ->groupBy('nid')
+        ->limit(5);
+
+  # execute the query
+  $results = $query->execute();
+
+  $quiz_nid  = db_query("select nid,score,time_start from quiz_node_results where uid = :uid and score < :score GROUP BY nid limit 2",array(':uid' => $user->uid,':score' => 75))->fetchAll();
+  $header = array('Course Name','Failed','Date','Score','Revise Course','Attempt Again');
+  foreach($results as $quiz){
+    $course_title = db_select('course_outline', 'co');
+    $course_title->join('node', 'n', 'co.nid= n.nid');
+    $course_title->fields('n', array('title','nid'))
+      ->condition('co.instance', $quiz->nid);
+    $course_title = $course_title->execute()->fetchAll();
+
+    $documents_id = db_query("select instance from course_outline where nid = :nid and object_type = :type",array(':nid' => $course_title[0]->nid,':type' => 'course_documents'))->fetchAll();
+  
+
+   foreach($documents_id as $document){
+     $doc_node_title = db_query("select title from node where nid = :nid",array(':nid' => $document->instance))->fetchField();
+     $documents .= "<a href =".$base_url."/node/".$document->instance.">".$doc_node_title."</a><br/>";
+   }
+
+    $options[] =  array(
+                    $course_title[0]->title,
+                    'yes',
+                     date('Y-m-d',$quiz->time_start),
+                    $quiz->score."/75",
+                    $documents,
+                    "<a href =".$base_url."/node/".$quiz->nid."/take>Re-Take</a>");
+    
+  }
+  $output =  theme('table', array(
+    'header' => $header,
+    'rows' => $options,
+    ));
+  
+  $output .= theme('pager');
+  return $output;
+}
+
+function en3_lms_passed_result(){
+  global $user;
+  global $base_url;
+    $query = db_select('quiz_node_results', 'qnr')->extend('PagerDefault');
+
+  # get the desired fields from the database
+  $query->condition('uid', $user->uid)
+        ->condition('score',75,'>')
+        ->fields('qnr', array('nid', 'score', 'time_start'))
+        ->groupBy('nid')
+        ->limit(5);
+
+  # execute the query
+  $results = $query->execute();
+
+  $quiz_nid  = db_query("select nid,score,time_start from quiz_node_results where uid = :uid and score < :score GROUP BY nid limit 2",array(':uid' => $user->uid,':score' => 75))->fetchAll();
+
+  $header = array('Course Name','Passed','Date','Score');
+  foreach($results as $quiz){
+    $course_title = db_select('course_outline', 'co');
+    $course_title->join('node', 'n', 'co.nid= n.nid');
+    $course_title->fields('n', array('title','nid'))
+      ->condition('co.instance', $quiz->nid);
+    $course_title = $course_title->execute()->fetchAll();
+
+    //$documents_id = db_query("select instance from course_outline where nid = :nid and object_type = :type",array(':nid' => $course_title[0]->nid,':type' => 'course_documents'))->fetchAll();
+  
+
+  
+    $options[] =  array(
+                    $course_title[0]->title,
+                    'yes',
+                     date('Y-m-d',$quiz->time_start),
+                    $quiz->score."/75",
+                   );
+    
+  }
+  $output =  theme('table', array(
+    'header' => $header,
+    'rows' => $options,
+    ));
+  
+  $output .= theme('pager');
+  return $output;
+
+}
+
+function en3_lms_courses_yet_to_attempt(){
+  global $user;
+  global $base_url;
+  $header = array('Course Name','Yet to Attempt');
+  $course_nodes = db_query("select nid from node where type = 'course'")->fetchAll();
+$course_title = db_select('course_outline', 'co');
+    $course_title->join('quiz_node_results', 'qnr', 'co.instance= qnr.nid');
+    $course_title->fields('co', array('nid'))
+      ->condition('qnr.uid', $user->uid);
+    $course_title = $course_title->execute()->fetchAll();
+    foreach($course_title as $nid){
+
+      $nids[] = $nid->nid;
+    }
+
+    foreach($course_nodes as $course_nid){
+
+      if(!in_array($course_nid->nid,$nids)){
+         $yet_course  = db_query("select title from node where nid = :nid",array(':nid' => $course_nid->nid))->fetchField();
+         $options[] = array("<a href = ".$base_url."/node/".$course_nid->nid.">".$yet_course."</a>",'Yes');
+      }
+    }
+  $output =  theme('table', array(
+    'header' => $header,
+    'rows' => $options,
+    ));
+return $output;
+}

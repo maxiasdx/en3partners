@@ -1,0 +1,64 @@
+/**
+ * @file
+ * Module specific styles.
+ */
+
+.opigno-quiz-app-results-collapsible-table thead tr.js-processed {
+  cursor: pointer;
+}
+
+.opigno-quiz-app-course-total-score {
+  width: 15%;
+}
+
+.opigno-quiz-app-course-total-time {
+  width: 15%;
+}
+
+.opigno-quiz-app-results-table .opigno-quiz-app-quiz-result-passed {
+  background: #D7FFD8;
+}
+
+.opigno-quiz-app-results-table .opigno-quiz-app-quiz-result-failed {
+  background: #FFECE8;
+}
+
+.opigno-quiz-app-results-table .opigno-quiz-app-quiz-result-pending {
+  background: #FFFFDD;
+}
+
+.opigno-quiz-app-fullscreen-link {
+  display: block;
+  float: right;
+  cursor: pointer;
+}
+
+.opigno-quiz-app-exit-fullscreen-link {
+  display: none;
+}
+
+.opigno-quiz-app-fullscreen .opigno-quiz-app-go-fullscreen-link {
+  display: none;
+}
+
+.opigno-quiz-app-fullscreen .opigno-quiz-app-exit-fullscreen-link {
+  display: block;
+}
+
+/**
+ * This part ONLY WORKS with the Platon theme.
+ * If users use a different theme, they will have to add some custom CSS to make this work.
+ */
+body.page-node-take.opigno-quiz-app-fullscreen #site-header,
+body.page-node-take.opigno-quiz-app-fullscreen #site-footer,
+body.page-node-take.opigno-quiz-app-fullscreen #first-sidebar {
+  display: none;
+}
+
+body.page-node-take.opigno-quiz-app-fullscreen #second-sidebar {
+  width: 100%;
+}
+
+body.page-node-take.opigno-quiz-app-fullscreen .row {
+  max-width: none;
+}

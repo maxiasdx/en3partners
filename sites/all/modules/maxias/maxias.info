@@ -1,0 +1,6 @@
+;$Id$
+
+name = Maxias
+description = A module to make the "Notify user option in user registration page to check by default"
+package = Maxias
+core = 7.x
