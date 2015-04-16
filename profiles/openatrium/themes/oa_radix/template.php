@@ -144,7 +144,7 @@ function oa_radix_preprocess_page(&$vars) {
   break;
   case 'quiz':
     $quiz_nid = db_query("select nid from course_outline where instance = :instance",array(':instance' => arg(1)))->fetchField();
-    $title  = db_query("select title from node where nid = :nid",array(':nid' => $quiz _nid))->fetchField();
+    $title  = db_query("select title from node where nid = :nid",array(':nid' => $quiz_nid))->fetchField();
     $breadcrumb = array();
     $breadcrumb[] = l('Home', '<front>');
     $breadcrumb[] = l('LMS', 'courses-list');
