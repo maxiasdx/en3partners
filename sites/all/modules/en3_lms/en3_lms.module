@@ -301,7 +301,9 @@ function en3_lms_node_view($node,$view_mode,$langcode){
     $breadcrumb = array();
     $breadcrumb[] = l('Home', '<front>');
     $breadcrumb[] = l('CRM', 'spaces');
-    $breadcrumb[] = l($title,$alias[0]);
+    if($title != '' ){
+      $breadcrumb[] = l($title,$alias[0]);
+    }
 
     drupal_set_breadcrumb($breadcrumb);
   }
