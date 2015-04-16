@@ -107,9 +107,68 @@ function oa_radix_preprocess_page(&$vars) {
 
     drupal_set_breadcrumb($breadcrumb);
   }
+  $node_type = db_query("select type from node where nid = :nid",array(':nid' => arg(1)))->fetchField();
+
+  switch($node_type){
+   case 'customer':
+    //Get the Current Path alias and explode it to get the Licensee path.
+    $alias = drupal_get_path_alias('node/'.arg(1));
+    $alias = explode("/",$alias);
+    //Using explode we have got the Licensee alias, using that get the source(nid) from url_alias.
+    $node_alias = db_query("select source from url_alias where alias = :alias",array(':alias' => $alias[0]))->fetchField();
+    $node_id = explode("/",$node_alias);
+    // After explode the $node_alias you can get the nid, based on that get the node title which can be used in breadcrumb.
+    $title  = db_query("select title from node where nid = :nid",array(':nid' => $node_id[1]))->fetchField();
+    $breadcrumb = array();
+    $breadcrumb[] = l('Home', '<front>');
+    $breadcrumb[] = l('CRM', 'spaces');
+      $breadcrumb[] = l($title,$alias[0]);
+
+
+    drupal_set_breadcrumb($breadcrumb);
+  break;
+  case 'oa_space':
+    $breadcrumb = array();
+    $breadcrumb[] = l('Home', '<front>');
+    $breadcrumb[] = l('CRM', 'spaces');
+
+    drupal_set_breadcrumb($breadcrumb);
+  break;
+  
+  case 'course':
+     $breadcrumb = array();
+    $breadcrumb[] = l('Home', '<front>');
+    $breadcrumb[] = l('LMS', 'courses-list');
+
+    drupal_set_breadcrumb($breadcrumb);
+  break;
+  case 'quiz':
+    $quiz_nid = db_query("select nid from course_outline where instance = :instance",array(':instance' => arg(1)))->fetchField();
+    $title  = db_query("select title from node where nid = :nid",array(':nid' => $quiz _nid))->fetchField();
+    $breadcrumb = array();
+    $breadcrumb[] = l('Home', '<front>');
+    $breadcrumb[] = l('LMS', 'courses-list');
+    $breadcrumb[] = l($title,'node/'.$quiz_nid);
+
+    drupal_set_breadcrumb($breadcrumb);
+  break;
+    case 'course_documents':
+     $course_nid = db_query("select nid from course_outline where instance = :instance",array(':instance' => arg(1)))->fetchField();
+     $title  = db_query("select title from node where nid = :nid",array(':nid' => $course_nid))->fetchField();
+     $breadcrumb = array(); 
+     $breadcrumb[] = l('Home', '<front>');
+     $breadcrumb[] = l('LMS', 'courses-list');
+     $breadcrumb[] = l($title,'node/'.$course_nid);
+
+    drupal_set_breadcrumb($breadcrumb);
+  break;
+  }
+
 }
 
 function oa_radix_breadcrumb($variables) {
+  
+  
   $breadcrumb = $variables['breadcrumb'];
   $breadcrumb = array_unique($breadcrumb);
     
@@ -131,7 +190,9 @@ function oa_radix_breadcrumb($variables) {
       $i++;
     }
     $crumbs .= '<span class="active">'. drupal_get_title() .'</span></div>';
+
     return $crumbs;
   }
 }
-?>
+
+
