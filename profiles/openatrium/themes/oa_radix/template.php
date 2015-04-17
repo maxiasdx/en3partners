@@ -109,13 +109,17 @@ function oa_radix_preprocess_page(&$vars) {
   }
   $node_type = db_query("select type from node where nid = :nid",array(':nid' => arg(1)))->fetchField();
 
+
   switch($node_type){
+
    case 'customer':
     //Get the Current Path alias and explode it to get the Licensee path.
     $alias = drupal_get_path_alias('node/'.arg(1));
+    
     $alias = explode("/",$alias);
     //Using explode we have got the Licensee alias, using that get the source(nid) from url_alias.
     $node_alias = db_query("select source from url_alias where alias = :alias",array(':alias' => $alias[0]))->fetchField();
+
     $node_id = explode("/",$node_alias);
     // After explode the $node_alias you can get the nid, based on that get the node title which can be used in breadcrumb.
     $title  = db_query("select title from node where nid = :nid",array(':nid' => $node_id[1]))->fetchField();
@@ -123,7 +127,7 @@ function oa_radix_preprocess_page(&$vars) {
     $breadcrumb[] = l('Home', '<front>');
     $breadcrumb[] = l('CRM', 'spaces');
       $breadcrumb[] = l($title,$alias[0]);
-
+	
 
     drupal_set_breadcrumb($breadcrumb);
   break;
@@ -184,7 +188,7 @@ function oa_radix_breadcrumb($variables) {
     
       $pos = strpos($breadcrumb[$i], drupal_get_title());
       //we stop duplicates entering where there is a sub nav based on page jumps
-      if ($pos === false){
+      if ($breadcrumb[$i] !== drupal_get_title()){
         $crumbs .= $breadcrumb[$i] .' &raquo; ';
       }
       $i++;
