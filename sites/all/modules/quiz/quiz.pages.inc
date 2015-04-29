@@ -538,13 +538,18 @@ function theme_quiz_jumper($variables) {
  * @ingroup themeable
  */
 function theme_quiz_take_summary($variables) {
+  global $base_url;
   $quiz = $variables['quiz'];
   $questions = $variables['questions'];
+  $max_pass_score = $quiz->field_pass_score[LANGUAGE_NONE][0]['value'];
   $score = $variables['score'];
   $summary = $variables['summary'];
   $rid =  $variables['rid'];
   // Set the title here so themers can adjust.
   drupal_set_title($quiz->title);
+  /** Patch Starts **/
+  $quiz_mapped_node = db_query("select nid from course_outline where instance  = :instance",array(':instance' => $quiz->nid))->fetchField();
+  $quiz_mapped_node_alias = drupal_get_path_alias('node/'.$quiz_mapped_node);
 
   // Display overall result.
   $output = '';
@@ -558,11 +563,11 @@ function theme_quiz_take_summary($variables) {
       }
       drupal_set_message($msg, 'warning');
     }
-    $output .= '<div id="quiz_score_possible">' . t('You got %num_correct of %question_count possible points.', array('%num_correct' => $score['numeric_score'], '%question_count' => $score['possible_score'])) . '</div>' . "\n";
-    $output .= '<div id="quiz_score_percent">' . t('Your score: %score %', array('%score' => $score['percentage_score'])) . '</div>' . "\n";
+    $output .= '<div id="quiz_score_possible">' . t(' Your Score : %num_correct / %question_count ', array('%num_correct' => $score['numeric_score'], '%question_count' => $score['possible_score'])) . '</div>' . "\n";
+   // $output .= '<div id="quiz_score_percent">' . t('Your score: %score %', array('%score' => $score['percentage_score'])) . '</div>' . "\n";
   }
   if (isset($summary['passfail'])) {
-    $output .= '<div id="quiz_summary">' . $summary['passfail'] . '</div>' . "\n";
+   // $output .= '<div id="quiz_summary">' . $summary['passfail'] . '</div>' . "\n";
   }
   if (isset($summary['result'])) {
     $output .= '<div id="quiz_summary">' . $summary['result'] . '</div>' . "\n";
@@ -571,6 +576,16 @@ function theme_quiz_take_summary($variables) {
   if ($quiz->display_feedback) {
     $form = drupal_get_form('quiz_report_form', $questions);
     $output .= drupal_render($form);
+  }
+  if($score['numeric_score'] <  $max_pass_score){
+   
+    $output .= '<div id="quiz_score_possible">Pls don\'t give up and Try again </div>';
+    $output .= '<a href ="'.$base_url.'/node/'.$quiz->nid.'">Attempt Again</a><br/>';
+    $output .= '<a href ="'. $base_url ."/". $quiz_mapped_node_alias.'">Revise</a>';
+  } 
+  else  
+  {
+      $output .= '<div id="quiz_score_possible">Congrats, you can go ahead to market this product. </div>';
   }
   return $output;
 }
