@@ -581,12 +581,13 @@ function theme_quiz_take_summary($variables) {
    
     $output .= '<div id="quiz_score_possible">Pls don\'t give up and Try again </div>';
     $output .= '<a href ="'.$base_url.'/node/'.$quiz->nid.'">Attempt Again</a><br/>';
-    $output .= '<a href ="'. $base_url ."/". $quiz_mapped_node_alias.'">Revise</a>';
+    $output .= '<a href ="'. $base_url ."/". $quiz_mapped_node_alias.'">Revise</a><br/>';
   } 
   else  
   {
-      $output .= '<div id="quiz_score_possible">Congrats, you can go ahead to market this product. </div>';
+      $output .= '<div id="quiz_score_possible">Congrats, you can go ahead to market this product. </div><br/>';
   }
+  $output .=  '<a href ="'. $base_url .'/mycourses-overview">My Courses Overview</a>';
   return $output;
 }
 
