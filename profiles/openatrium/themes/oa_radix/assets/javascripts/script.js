@@ -4,7 +4,7 @@
 	var score = $("#quiz_score_percent em.placeholder").text();
 	
 	if(score < 75){
-		$( "<p id='messageText'>You need 75% to complete this quiz. Please try again.<a href='http://stagefms.mx.sg/?q=content/quiz'>Click Here</a></p>" ).insertAfter( "#quiz_summary" );
+		//$( "<p id='messageText'>You need 75% to complete this quiz. Please try again.<a href='http://stagefms.mx.sg/?q=content/quiz'>Click Here</a></p>" ).insertAfter( "#quiz_summary" );
 	}
 	
 	if(score >= 75){
