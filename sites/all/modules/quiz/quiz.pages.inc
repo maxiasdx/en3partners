@@ -563,7 +563,7 @@ function theme_quiz_take_summary($variables) {
       }
       drupal_set_message($msg, 'warning');
     }
-    $output .= '<div id="quiz_score_possible">' . t(' Your Score : %num_correct / %question_count ', array('%num_correct' => $score['numeric_score'], '%question_count' => $score['possible_score'])) . '</div>' . "\n";
+    $output .= '<div id="quiz_score_possible">' . t(' Your Score : %num_correct / %question_count ', array('%num_correct' => $score['numeric_score'], '%question_count' => $score['question_count'])) . '</div>' . "\n";
    // $output .= '<div id="quiz_score_percent">' . t('Your score: %score %', array('%score' => $score['percentage_score'])) . '</div>' . "\n";
   }
   if (isset($summary['passfail'])) {
