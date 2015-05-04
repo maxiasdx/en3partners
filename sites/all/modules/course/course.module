@@ -165,7 +165,7 @@ function course_menu() {
 
   // Display the 'Take course' menu item as a tab or link, depending.
   $items['node/%course/takecourse'] = array(
-    'title' => 'Take course',
+    'title' => 'Take Qourse',
     'title callback' => 'course_takecourse_title',
     'title arguments' => array(1),
     'description' => 'Take course.',
@@ -672,7 +672,7 @@ function course_block_save($delta, $edit) {
 function course_takecourse_title($node) {
   global $user;
   $report = course_report_load($node, $user);
-  return ($user->uid > 1 && isset($report->complete) && $report->complete) ? t('Review course') : t('Take course');
+  return   t('Take Quiz');
 }
 
 /**
@@ -1449,8 +1449,14 @@ function course_take_course($node) {
     if (!$outline) {
       $outline = t('No learning objects are available this time.');
     }
+    //pathc
+    $data = db_query("select title,nid from course_outline where nid = :nid and object_type = :type",array(':nid' => arg(1), ':type' => 'course_documents'))->fetchAll();
+    foreach($data as $nid){
+      $output .= "<a href =/node/".$nid->nid."><img class='show_icon' src='/profiles/openatrium/themes/oa_radix/assets/images/icon_img/view_documents.png' alt='' title='' /></a><br/>";
+    }
+    $output .= $outline;
 
-    return $outline;
+    return $output;
   }
   else {
     drupal_add_http_header('Status', '403 Forbidden');
