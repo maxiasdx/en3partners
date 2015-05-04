@@ -1451,11 +1451,11 @@ function course_take_course($node) {
     }
     //pathc
     $data = db_query("select title,nid from course_outline where nid = :nid and object_type = :type",array(':nid' => arg(1), ':type' => 'course_documents'))->fetchAll();
-    $output .= "<ul>"
+    $output .= "<ul>";
     foreach($data as $nid){
-      $output .= "<li><a href =/node/".$nid->nid."><img class='show_icon' src='/profiles/openatrium/themes/oa_radix/assets/images/icon_img/view_documents.png' alt='' title='' /></a><\li>";
+      $output .= "<li><a href =/node/".$nid->nid."><img class='show_icon' src='/profiles/openatrium/themes/oa_radix/assets/images/icon_img/view_documents.png' alt='' title='' /></a></li>";
     }
-    $output .= "</ul>"
+    $output .= "</ul>";
     $output .= $outline;
 
     return $output;
