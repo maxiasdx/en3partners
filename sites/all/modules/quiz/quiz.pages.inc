@@ -580,14 +580,14 @@ function theme_quiz_take_summary($variables) {
   if($score['numeric_score'] <  $max_pass_score){
    
     $output .= '<div id="quiz_score_possible">Pls don\'t give up and Try again </div>';
-    $output .= '<a href ="'.$base_url.'/node/'.$quiz->nid.'">Attempt Again</a><br/>';
-    $output .= '<a href ="'. $base_url ."/". $quiz_mapped_node_alias.'">Revise</a><br/>';
+    $output .= '<a class="attemptagain" href ="'.$base_url.'/node/'.$quiz->nid.'">Attempt Again</a><br/>';
+    $output .= '<a class="reviewcourse" href ="'. $base_url ."/". $quiz_mapped_node_alias.'">Revise</a><br/>';
   } 
   else  
   {
       $output .= '<div id="quiz_score_possible">Congrats, you can go ahead to market this product. </div><br/>';
   }
-  $output .=  '<a href ="'. $base_url .'/mycourses-overview">My Courses Overview</a>';
+  $output .=  '<a class="coursesoverview" href ="'. $base_url .'/mycourses-overview">My Courses Overview</a>';
   return $output;
 }
 
