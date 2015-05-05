@@ -1529,3 +1529,45 @@ display:none;
     50% { opacity: 0.0; }
     100% { opacity: 1.0; }
 }
+
+.page-node-take.node-type-quiz .region-content a.coursesoverview {
+  -webkit-animation-name: blinker;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-name: blinker;
+  -moz-animation-duration: 2s;
+  -moz-animation-timing-function: linear;
+  -moz-animation-iteration-count: infinite;
+  animation-name: blinker;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  color: #FFFF00;
+  font-weight: bold;
+  padding: 12px;
+  position: relative;
+  top: 11px;
+  float: left;
+  clear: both;
+  background: none repeat scroll 0 0 #39b54a;
+  border-radius: 12px;
+  width: 238px;
+  text-align: center;
+}
+
+.page-node-take.node-type-quiz .region-content a.attemptagain, .page-node-take.node-type-quiz .region-content a.reviewcourse {
+  background: none repeat scroll 0 0 #39b54a;
+  border-radius: 10px;
+  float: left;
+  position: relative;
+  text-align: center;
+  width: 260px;
+  color: #fff;
+  display: block;
+  font-weight: bold;
+  padding-bottom: 13px;
+  padding-top: 13px;
+  clear: both;
+  margin: 6px 0px;
+}
