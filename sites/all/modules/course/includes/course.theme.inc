@@ -37,6 +37,6 @@ function theme_course_outline_item($variables) {
  */
 function theme_course_take_course_button($variables) {
   $node = $variables['node'];
-  $link = '<div class="course-take-course-link-wrapper">' . l(t('Enroll here'), "node/{$node->nid}/takecourse", array('attributes' => array('class' => array('course-take-course-link')))) . '</div>';
+  $link = '<div class="course-take-course-link-wrapper">' . l(t('Enrol here'), "node/{$node->nid}/takecourse", array('attributes' => array('class' => array('course-take-course-link')))) . '</div>';
   return $link;
 }
