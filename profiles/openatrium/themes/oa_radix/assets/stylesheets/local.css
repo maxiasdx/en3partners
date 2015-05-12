@@ -1052,9 +1052,31 @@ body.page-node-add-quiz #taking-fieldset .fieldset-wrapper div.form-type-checkbo
     display: none;
 }
 
-.node-type-course h1.title{
-	font-family: Avenir-Roman;
+.node-type-course h1.title,
+.page-node-takecourse h1.title{ 
+	font-family: Avenir-Roman; 
 	color: #000000;
+}
+
+.page-node-takecourse .region-content .content ul{
+	width: 74.30939%;
+	display: inline-block;
+	margin: 0;
+}
+
+.page-node-takecourse .region-content .content .course-outline{
+	width: 25.6%;
+	display: inline-block;
+}
+
+.page-node-takecourse .region-content .content .course-outline .item-list ul{
+	width: 100%;
+}
+
+.page-node-takecourse .region-content .content ul li{
+	text-align: center;
+	display: inline-block;
+	margin-right: 20px;
 }
 
 .node-type-course .brenham-flipped-header{
@@ -1066,9 +1088,13 @@ body.page-node-add-quiz #taking-fieldset .fieldset-wrapper div.form-type-checkbo
 	color: #999;
 }
 
-.node-type-course .brenham-flipped-column-content-region-inner .panel-pane h3{
+.node-type-course .brenham-flipped-column-content-region-inner .panel-pane h3,
+.page-node-takecourse .region-content .content .course-title{
 	border-bottom: 4px solid #999;
     font-size: 16px;
+    line-height: 40px;
+    text-transform: uppercase;
+    color: #999;
 }
 
 body.page-node-add-quiz #summaryoptions-fieldset .description
@@ -1381,38 +1407,47 @@ body.page-node-add-quiz .form-item-summary-default-value
 
 .node-type-course .brenham-flipped-column-content-region.span9 .pane-course-outline .item-list ul li.quiz-course-quiz,
 .node-type-course .brenham-flipped-column-content-region.span9 .pane-course-outline .item-list ul li.last{
-	display: none;
+	/*display: none;*/
 }
 
 .node-type-course .span3 .item-list ul li img,
 .node-type-course .span3 .item-list ul li a,
-.node-type-course .span3 .item-list ul li span{
+.node-type-course .span3 .item-list ul li span,
+.page-node-takecourse .region-content .content .item-list ul li img,
+.page-node-takecourse .region-content .content .item-list ul li a,
+.page-node-takecourse .region-content .content .item-list ul li span{
 	display: inline-block;	
 }
 
-.node-type-course .span3 .item-list ul li{
+.node-type-course .span3 .item-list ul li, 
+.page-node-takecourse .region-content .content .item-list ul li{
 	position: relative;
 	margin: 0 0 0.25em 0;
     padding: 6px 0;
 	border-bottom: 1px solid #F0F0F0;
+	text-align: inherit;
 }
 
-.node-type-course .span3 .item-list ul li img{
+.node-type-course .span3 .item-list ul li img,
+.page-node-takecourse .region-content .content .item-list ul li img{
 	float: left;
 }
 
-.node-type-course .span3 .item-list ul li a{
+.node-type-course .span3 .item-list ul li a,
+.page-node-takecourse .region-content .content .item-list ul li a{
 	width: 50%;
 	padding-left: 20px;
 	color: #000;
 	text-decoration: none;
 }
 
-.node-type-course .span3 .item-list ul li span{
+.node-type-course .span3 .item-list ul li span,
+.page-node-takecourse .region-content .content .item-list ul li span{
 	float: right;
 	font-weight: bold;
 	position: absolute;
 	right: 0;
+	color: #999;
 }
 
 #edit-course
