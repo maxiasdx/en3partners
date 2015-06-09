@@ -47,10 +47,10 @@
 				errorMsg.push("Appointment date and time is required!");
 			}*/
 			
-			if($("#edit-comment-body-und-0-value").val() == ""){
+		/*	if($("#edit-comment-body-und-0-value").val() == ""){
 				errorMsg.push("Remarks field is required!");
-			}
-			/*
+			}*/
+			
 			if($("#edit-field-cheque-no-und-0-value").val() == ""){
 				errorMsg.push("Cheque No field is required!");
 			}
@@ -73,7 +73,7 @@
 			
 			if($("#edit-field-attachments-und-0-upload").val() == ""){
 				errorMsg.push("Please choose a file to upload!");
-			}*/
+			}
 		}
 		
 		if(errorMsg != ""){
