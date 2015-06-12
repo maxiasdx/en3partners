@@ -1528,9 +1528,9 @@ float:left:
 display:none;
 }
 /*Maxias*/
-#block-block-6 { background: none repeat scroll 0 0 #39b54a;border-radius: 10px;float: right;height: 40px;position: relative;text-align: center;top: -80px;width: 260px;}
-#block-block-6 .content > a {color: #FFFF00 ;font-weight: bold;padding: 10px;position: relative;top: 11px;}
-#block-block-6 .content > a {
+#block-block-6, #block-block-7 { background: none repeat scroll 0 0 #39b54a;border-radius: 10px;float: right;height: 40px;position: relative;text-align: center;top: -80px;width: 260px;}
+#block-block-6 .content > a, #block-block-7 .content > a {color: #FFFF00 ;font-weight: bold;padding: 10px;position: relative;top: 11px;}
+#block-block-6 .content > a, #block-block-7 .content > a {
     -webkit-animation-name: blinker;
     -webkit-animation-duration: 2s;
     -webkit-animation-timing-function: linear;
