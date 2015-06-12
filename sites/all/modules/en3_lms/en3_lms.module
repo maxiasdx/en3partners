@@ -249,8 +249,9 @@ function en3_lms_form_alter(&$form, &$form_state, $form_id) {
   if($form_id == 'comment_node_customer_form'){
    if(!in_array('administrator',$user->roles)){
       if(!in_array('Site admin',$user->roles)){
+      $node = node_load($form_state['build_info']['args'][0]->nid);
+      $comment_ids = db_query("select cid from comment where nid = :nid order by cid DESC",array(':nid' => $form_state['build_info']['args'][0]->nid))->fetchAll();
 
-      $comment_ids = db_query("select cid from comment where nid = :nid",array(':nid' => $form_state['build_info']['args'][0]->nid))->fetchAll();
       foreach($comment_ids as $cid){
         $comment = comment_load($cid->cid);
 
@@ -259,10 +260,31 @@ function en3_lms_form_alter(&$form, &$form_state, $form_id) {
         }
       }
       if($date_is_there){
-        $form['field_signed_date']['#disabled'] = TRUE;
+       $form['field_signed_date']['#disabled'] = TRUE;
 
      }
     }
+    // Select the lastest cid of a node.
+      $comment_id = db_query("select cid from comment where nid = :nid order by cid DESC",array(':nid' => $form_state['build_info']['args'][0]->nid))->fetchField();
+      if($comment_id){
+        $comments = comment_load($comment_id);
+          if(!empty($comments->field_signed_date)){
+            $date1 = date_create($comments->field_signed_date[LANGUAGE_NONE][0]['value']); // format of yyyy-mm-dd
+            $date2 = date_create(date('Y-m-d')); // format of yyyy-mm-dd
+            $dateDiff = date_diff($date1, $date2);
+            $date_diff = $dateDiff->format("%a");
+            //If date diff is greater than 180 days means 6 months  pls change the status value to open.
+            if($date_diff > 180){
+           
+              $node->field_cus_status[LANGUAGE_NONE][0]['value'] = 1;
+              $node = node_submit($node);
+              node_save($node);
+            }
+
+          
+          }
+      }
+           
    }
 }
 if($form_id == 'customer_node_form'){
