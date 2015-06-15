@@ -247,6 +247,10 @@ function en3_lms_license_img_block(){
 function en3_lms_form_alter(&$form, &$form_state, $form_id) {
   global $user;
   if($form_id == 'comment_node_customer_form'){
+      // Put a placeholder text in Commission Amount.
+      $form['field_commission_amount']['und'][0]['value']['#attributes']['placeholder'] = t('Commission Amount');
+
+
    if(!in_array('administrator',$user->roles)){
       if(!in_array('Site admin',$user->roles)){
       $node = node_load($form_state['build_info']['args'][0]->nid);
@@ -319,15 +323,40 @@ function en3_lms_views_pre_render(&$view){
   if($view->name == 'og_members'){
    
     if(in_array('Account Manager',$user->roles)){  
-    foreach ($view -> result as $key => &$result) {
-  
-  
+      foreach ($view -> result as $key => &$result) {
         unset($view->result[$key]);
-  
-}
-}
-}
+      }
+    }
+  }
 
+  if($view->name == 'sales_report_customer'){
+   
+       foreach($view->result as $result){
+    $_SESSION['commission_amt'] += $result->_field_data['comment_node_comment_statistics_cid']['entity']->field_commission_amount[LANGUAGE_NONE][0]['value'];
+  
+    }
+      $view->set_item_option('page', 'footer', 'area', 'content', 'MY TEXT');
+
+  }
+if(!in_array('Licensee Employee',$user->roles)){  
+
+  if(($view->name == 'customer_list_for_licensee_page') && ($view->current_display == 'block_1')){
+    
+     foreach ($view -> result as $key => &$result) {
+        unset($view->result[$key]);
+      }
+    }
+
+  }
+  else
+  {
+     if(($view->name == 'customer_list_for_licensee_page') && ($view->current_display == 'block')){
+    
+     foreach ($view -> result as $key => &$result) {
+        unset($view->result[$key]);
+      }
+    }
+  }
 }
 
 /**
@@ -353,5 +382,18 @@ function en3_lms_node_view($node,$view_mode,$langcode){
     drupal_set_breadcrumb($breadcrumb);
   break;
 }
+}
+
+function en3_lms_views_post_execute(&$view) {
+if(($view->name == 'sales_report_customer') &&($view->current_display == 'page')){
+      $footer_links = array(
+        'content' => 'Total Commission Amount : ' .$_SESSION['commission_amt'] .' SGD',
+        'format' => 'plain_text',
+        'tokenize' => 0,
+    );
+    $view->display['page']->handler->handlers['footer']['area']->options = $footer_links; 
+    unset($_SESSION['commission_amt']);
+  }
+
 }
 
