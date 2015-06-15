@@ -338,7 +338,7 @@ function en3_lms_views_pre_render(&$view){
       $view->set_item_option('page', 'footer', 'area', 'content', 'MY TEXT');
 
   }
-if((!in_array('Licensee Employee',$user->roles) || !in_array('administrator',$user->roles)){  
+if((!in_array('Licensee Employee',$user->roles)) || (!in_array('administrator',$user->roles))){  
 
   if(($view->name == 'customer_list_for_licensee_page') && ($view->current_display == 'block_1')){
     
