@@ -670,7 +670,7 @@ padding: 10px 0px 10px 0 !important
 .node-type-customer .group-products.field-group-fieldset{
 	border: 1px solid #EAEAEA;
 	border-radius: 4px;
-	margin-top: -20px;
+	/*margin-top: -20px;*/
 }
 
 .node-type-customer .field-group-fieldset .fieldset-legend{
