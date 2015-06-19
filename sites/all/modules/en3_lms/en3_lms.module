@@ -97,10 +97,18 @@ function en3_lms_failed_result(){
     $doc_node_title = db_query("select title from node where nid = :nid",array(':nid' => $document->instance))->fetchField();
     $documents .= "<a href =".url('node/'.$document->instance).">".$doc_node_title."</a> / ";  
       }
+      if(!empty($quiz->time_end)){
+        $end_date = date('j F Y',$quiz->time_end);
+      }
+      else
+      {
+         $end_date = '';
+      }
+     
     $options[] =  array(
                     $course_title[0]->title,
                     'yes',
-                     date('j F Y',$quiz->time_end),
+                     $end_date,
                     $quiz->score."/100",
                     substr($documents,0,-2) , // To eliminate the Last slash symbol in the link.
                     "<a href =".url("node/".$quiz->nid."/take").">Re-Take</a>");
@@ -157,12 +165,18 @@ function en3_lms_passed_result(){
     $course_title = $course_title->execute()->fetchAll();
 
     //$documents_id = db_query("select instance from course_outline where nid = :nid and object_type = :type",array(':nid' => $course_title[0]->nid,':type' => 'course_documents'))->fetchAll();
-  
+   if(!empty($quiz->time_end)){
+        $end_date = date('j F Y',$quiz->time_end);
+      }
+      else
+      {
+         $end_date = '';
+      }
   
     $options[] =  array(
                     $course_title[0]->title,
                     'yes',
-                     date('j F Y',$quiz->time_end),
+                     $end_date,
                     $quiz->score."/100",
                    );
     
