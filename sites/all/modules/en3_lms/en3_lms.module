@@ -301,8 +301,11 @@ function en3_lms_form_alter(&$form, &$form_state, $form_id) {
               $comment->field_report_status[LANGUAGE_NONE][0]['value'] = 1;
               comment_save($comment);
               $node->field_cus_status[LANGUAGE_NONE][0]['value'] = 1;
+
               $node = node_submit($node);
               node_save($node);
+                     $form['field_signed_date']['#disabled'] = FALSE;
+
             }
 
    
