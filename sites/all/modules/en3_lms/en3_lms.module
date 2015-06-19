@@ -297,7 +297,9 @@ function en3_lms_form_alter(&$form, &$form_state, $form_id) {
             $date_diff = $dateDiff->format("%a");
             //If date diff is greater than 180 days means 6 months  pls change the status value to open.
             if($date_diff > 180){
-           
+              $comment = comment_load($comment_id);
+              $comment->field_report_status[LANGUAGE_NONE][0]['value'] = 1;
+              comment_save($comment);
               $node->field_cus_status[LANGUAGE_NONE][0]['value'] = 1;
               $node = node_submit($node);
               node_save($node);
