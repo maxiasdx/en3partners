@@ -261,13 +261,13 @@ function en3_lms_license_img_block(){
 function en3_lms_form_alter(&$form, &$form_state, $form_id) {
   global $user;
   if($form_id == 'comment_node_customer_form'){
+
       // Put a placeholder text in Commission Amount.
       $form['field_commission_amount']['und'][0]['value']['#attributes']['placeholder'] = t('Commission Amount');
 
 
    if(!in_array('administrator',$user->roles)){
-      if(!in_array('Site admin',$user->roles)){
-      $node = node_load($form_state['build_info']['args'][0]->nid);
+    if(!in_array('Site admin',$user->roles)){
       $comment_ids = db_query("select cid from comment where nid = :nid order by cid DESC",array(':nid' => $form_state['build_info']['args'][0]->nid))->fetchAll();
 
       foreach($comment_ids as $cid){
@@ -283,7 +283,11 @@ function en3_lms_form_alter(&$form, &$form_state, $form_id) {
      }
     }
     // Select the lastest cid of a node.
-      $comment_id = db_query("select cid from comment where nid = :nid order by cid DESC",array(':nid' => $form_state['build_info']['args'][0]->nid))->fetchField();
+          
+          }
+                $node = node_load($form_state['build_info']['args'][0]->nid);
+
+             $comment_id = db_query("select cid from comment where nid = :nid order by cid DESC",array(':nid' => $form_state['build_info']['args'][0]->nid))->fetchField();
       if($comment_id){
         $comments = comment_load($comment_id);
           if(!empty($comments->field_signed_date)){
@@ -299,8 +303,7 @@ function en3_lms_form_alter(&$form, &$form_state, $form_id) {
               node_save($node);
             }
 
-          
-          }
+   
       }
            
    }
