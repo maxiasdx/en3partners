@@ -114,7 +114,8 @@ function en3_lms_failed_result(){
                     "<a href =".url("node/".$quiz->nid."/take").">Re-Take</a>");
       
     }
-      //Assign the node id to avoid duplicates.
+    unset($documents);     
+ //Assign the node id to avoid duplicates.
       $node_id_already[] = $course_title[0]->nid;
 
     
